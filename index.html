@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePass - Strong Password Generator</title>
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --primary-dark: #3a56cc;
+            --secondary: #ff6b6b;
+            --dark: #2d3748;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --success: #48bb78;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            margin: 20px;
+            transition: var(--transition);
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 24px;
+            font-weight: 700;
+            font-size: 28px;
+        }
+
+        .password-display {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        #password {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--gray);
+            border-radius: 8px;
+            font-size: 18px;
+            background-color: var(--light);
+            color: var(--dark);
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        #password:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d8e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .settings {
+            margin-bottom: 24px;
+        }
+
+        .setting-group {
+            margin-bottom: 20px;
+        }
+
+        .setting-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .setting-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .dropdown-btn {
+            background-color: var(--gray);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .dropdown-btn:hover {
+            background-color: #d1d8e0;
+        }
+
+        .dropdown-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.3);
+        }
+
+        .dropdown-content {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-top: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .length-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .length-option {
+            flex: 1;
+            text-align: center;
+        }
+
+        .length-btn {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--gray);
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .length-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .length-btn.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .strength-meter {
+            height: 8px;
+            background-color: var(--gray);
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--secondary);
+            transition: var(--transition);
+        }
+
+        .strength-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--dark);
+        }
+
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--dark);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+            animation: slideDown 0.3s ease, fadeOut 0.3s ease 2s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { top: -50px; }
+            to { top: 20px; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .length-options {
+                flex-direction: column;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        button:focus, input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.3);
+        }
+
+        /* Animation for generated password */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .generated {
+            animation: pulse 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SecurePass Generator</h1>
+        
+        <div class="password-display">
+            <input type="text" id="password" readonly aria-label="Generated password">
+            <div class="btn-group">
+                <button id="regenerate" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                    </svg>
+                    Regenerate
+                </button>
+                <button id="copy" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                    </svg>
+                    Copy
+                </button>
+            </div>
+        </div>
+        
+        <div class="settings">
+            <div class="setting-group">
+                <div class="setting-header">
+                    <span class="setting-title">Password Length</span>
+                </div>
+                <button id="lengthDropdown" class="dropdown-btn" aria-expanded="false" aria-haspopup="true">
+                    <span id="selectedLength">12 characters</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </button>
+                <div id="lengthOptions" class="dropdown-content" role="menu">
+                    <div class="length-options">
+                        <div class="length-option">
+                            <button class="length-btn" data-length="10">10</button>
+                        </div>
+                        <div class="length-option">
+                            <button class="length-btn selected" data-length="12">12</button>
+                        </div>
+                        <div class="length-option">
+                            <button class="length-btn" data-length="16">16</button>
+                        </div>
+                        <div class="length-option">
+                            <button class="length-btn" data-length="20">20</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-header">
+                    <span class="setting-title">Customize Password</span>
+                </div>
+                <button id="customizeDropdown" class="dropdown-btn" aria-expanded="false" aria-haspopup="true">
+                    <span>Select character types</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </button>
+                <div id="customizeOptions" class="dropdown-content" role="menu">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="uppercase" checked>
+                            <label for="uppercase">Uppercase Letters (A-Z)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="lowercase" checked>
+                            <label for="lowercase">Lowercase Letters (a-z)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="numbers" checked>
+                            <label for="numbers">Numbers (0-9)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="symbols" checked>
+                            <label for="symbols">Special Characters (!@#$%^&*)</label>
+                        </div>
+                    </div>
+                    <button id="applyCustom" class="btn btn-primary" style="margin-top: 15px; width: 100%;">OK</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strength-meter">
+            <div id="strengthBar" class="strength-bar"></div>
+        </div>
+        <div class="strength-info">
+            <span>Password Strength:</span>
+            <span id="strengthText">Medium</span>
+        </div>
+        
+        <button id="generate" class="btn btn-success" style="margin-top: 24px;">
+            Generate Password
+        </button>
+    </div>
+    
+    <div id="copyNotification" class="copy-notification" aria-live="polite">
+        Password copied to clipboard!
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const passwordInput = document.getElementById('password');
+            const generateBtn = document.getElementById('generate');
+            const regenerateBtn = document.getElementById('regenerate');
+            const copyBtn = document.getElementById('copy');
+            const lengthDropdown = document.getElementById('lengthDropdown');
+            const lengthOptions = document.getElementById('lengthOptions');
+            const customizeDropdown = document.getElementById('customizeDropdown');
+            const customizeOptions = document.getElementById('customizeOptions');
+            const applyCustomBtn = document.getElementById('applyCustom');
+            const lengthBtns = document.querySelectorAll('.length-btn');
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            const copyNotification = document.getElementById('copyNotification');
+            
+            // Character sets
+            const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+            const numberChars = '0123456789';
+            const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            // Settings
+            let settings = {
+                length: 12,
+                uppercase: true,
+                lowercase: true,
+                numbers: true,
+                symbols: true
+            };
+            
+            // Initialize
+            updateSelectedLength();
+            
+            // Event Listeners
+            generateBtn.addEventListener('click', generatePassword);
+            regenerateBtn.addEventListener('click', generatePassword);
+            copyBtn.addEventListener('click', copyPassword);
+            
+            lengthDropdown.addEventListener('click', toggleLengthDropdown);
+            customizeDropdown.addEventListener('click', toggleCustomizeDropdown);
+            applyCustomBtn.addEventListener('click', applyCustomSettings);
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!lengthDropdown.contains(e.target) && !lengthOptions.contains(e.target)) {
+                    lengthOptions.classList.remove('show');
+                    lengthDropdown.setAttribute('aria-expanded', 'false');
+                }
+                
+                if (!customizeDropdown.contains(e.target) && !customizeOptions.contains(e.target)) {
+                    customizeOptions.classList.remove('show');
+                    customizeDropdown.setAttribute('aria-expanded', 'false');
+                }
+            });
+            
+            // Length buttons
+            lengthBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const length = parseInt(this.getAttribute('data-length'));
+                    settings.length = length;
+                    
+                    // Update UI
+                    lengthBtns.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    updateSelectedLength();
+                    
+                    // Close dropdown
+                    lengthOptions.classList.remove('show');
+                    lengthDropdown.setAttribute('aria-expanded', 'false');
+                });
+            });
+            
+            // Functions
+            function toggleLengthDropdown() {
+                const isExpanded = lengthDropdown.getAttribute('aria-expanded') === 'true';
+                lengthOptions.classList.toggle('show');
+                lengthDropdown.setAttribute('aria-expanded', !isExpanded);
+                
+                // Close other dropdown
+                customizeOptions.classList.remove('show');
+                customizeDropdown.setAttribute('aria-expanded', 'false');
+            }
+            
+            function toggleCustomizeDropdown() {
+                const isExpanded = customizeDropdown.getAttribute('aria-expanded') === 'true';
+                customizeOptions.classList.toggle('show');
+                customizeDropdown.setAttribute('aria-expanded', !isExpanded);
+                
+                // Close other dropdown
+                lengthOptions.classList.remove('show');
+                lengthDropdown.setAttribute('aria-expanded', 'false');
+            }
+            
+            function applyCustomSettings() {
+                settings.uppercase = document.getElementById('uppercase').checked;
+                settings.lowercase = document.getElementById('lowercase').checked;
+                settings.numbers = document.getElementById('numbers').checked;
+                settings.symbols = document.getElementById('symbols').checked;
+                
+                // Close dropdown
+                customizeOptions.classList.remove('show');
+                customizeDropdown.setAttribute('aria-expanded', 'false');
+            }
+            
+            function updateSelectedLength() {
+                document.getElementById('selectedLength').textContent = `${settings.length} characters`;
+            }
+            
+            function generatePassword() {
+                let availableChars = '';
+                let password = '';
+                
+                // Build available characters based on settings
+                if (settings.uppercase) availableChars += uppercaseChars;
+                if (settings.lowercase) availableChars += lowercaseChars;
+                if (settings.numbers) availableChars += numberChars;
+                if (settings.symbols) availableChars += symbolChars;
+                
+                // Check if at least one character type is selected
+                if (availableChars.length === 0) {
+                    alert('Please select at least one character type!');
+                    return;
+                }
+                
+                // Generate password
+                for (let i = 0; i < settings.length; i++) {
+                    const randomIndex = Math.floor(Math.random() * availableChars.length);
+                    password += availableChars[randomIndex];
+                }
+                
+                // Ensure password contains at least one character from each selected type
+                if (settings.uppercase && !containsAny(password, uppercaseChars)) {
+                    password = replaceRandomChar(password, uppercaseChars);
+                }
+                if (settings.lowercase && !containsAny(password, lowercaseChars)) {
+                    password = replaceRandomChar(password, lowercaseChars);
+                }
+                if (settings.numbers && !containsAny(password, numberChars)) {
+                    password = replaceRandomChar(password, numberChars);
+                }
+                if (settings.symbols && !containsAny(password, symbolChars)) {
+                    password = replaceRandomChar(password, symbolChars);
+                }
+                
+                // Display password
+                passwordInput.value = password;
+                passwordInput.classList.add('generated');
+                setTimeout(() => passwordInput.classList.remove('generated'), 300);
+                
+                // Calculate strength
+                calculateStrength(password);
+            }
+            
+            function containsAny(str, chars) {
+                return [...chars].some(char => str.includes(char));
+            }
+            
+            function replaceRandomChar(str, chars) {
+                const randomIndex = Math.floor(Math.random() * str.length);
+                const randomChar = chars[Math.floor(Math.random() * chars.length)];
+                return str.substring(0, randomIndex) + randomChar + str.substring(randomIndex + 1);
+            }
+            
+            function copyPassword() {
+                if (!passwordInput.value) {
+                    alert('No password to copy!');
+                    return;
+                }
+                
+                passwordInput.select();
+                document.execCommand('copy');
+                
+                // Show notification
+                copyNotification.classList.add('show');
+                setTimeout(() => {
+                    copyNotification.classList.remove('show');
+                }, 2500);
+            }
+            
+            function calculateStrength(password) {
+                let strength = 0;
+                const length = password.length;
+                
+                // Length contributes up to 50 points (12 chars = 30 pts, 20+ chars = 50 pts)
+                strength += Math.min(50, Math.floor(length * 2.5));
+                
+                // Character variety
+                let varietyScore = 0;
+                if (settings.uppercase && containsAny(password, uppercaseChars)) varietyScore += 10;
+                if (settings.lowercase && containsAny(password, lowercaseChars)) varietyScore += 10;
+                if (settings.numbers && containsAny(password, numberChars)) varietyScore += 10;
+                if (settings.symbols && containsAny(password, symbolChars)) varietyScore += 20;
+                
+                strength += varietyScore;
+                
+                // Normalize to 100
+                strength = Math.min(100, strength);
+                
+                // Update UI
+                strengthBar.style.width = `${strength}%`;
+                
+                if (strength < 40) {
+                    strengthBar.style.backgroundColor = '#ff6b6b';
+                    strengthText.textContent = 'Weak';
+                } else if (strength < 70) {
+                    strengthBar.style.backgroundColor = '#ffa500';
+                    strengthText.textContent = 'Medium';
+                } else if (strength < 90) {
+                    strengthBar.style.backgroundColor = '#48bb78';
+                    strengthText.textContent = 'Strong';
+                } else {
+                    strengthBar.style.backgroundColor = '#2f855a';
+                    strengthText.textContent = 'Very Strong';
+                }
+            }
+            
+            // Generate initial password
+            generatePassword();
+        });
+    </script>
+</body>
+</html>
