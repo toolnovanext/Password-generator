@@ -1,655 +1,558 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecurePass - Strong Password Generator</title>
-    <style>
-        :root {
-            --primary: #4a6bff;
-            --primary-dark: #3a56cc;
-            --secondary: #ff6b6b;
-            --dark: #2d3748;
-            --light: #f7fafc;
-            --gray: #e2e8f0;
-            --success: #48bb78;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --transition: all 0.3s ease;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Password Vault</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      color: #333;
+    }
 
-        body {
-            background-color: #f5f7fa;
-            color: var(--dark);
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
 
-        .container {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            margin: 20px;
-            transition: var(--transition);
-        }
+    header {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
 
-        h1 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 24px;
-            font-weight: 700;
-            font-size: 28px;
-        }
+    header h1 {
+      font-size: 3em;
+      margin: 0;
+      font-weight: 700;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
 
-        .password-display {
-            position: relative;
-            margin-bottom: 24px;
-        }
+    header h2 {
+      font-size: 1.3em;
+      margin: 10px 0 0 0;
+      font-weight: 300;
+      opacity: 0.9;
+    }
 
-        #password {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--gray);
-            border-radius: 8px;
-            font-size: 18px;
-            background-color: var(--light);
-            color: var(--dark);
-            margin-bottom: 10px;
-            transition: var(--transition);
-        }
+    header p {
+      font-size: 0.9em;
+      margin: 15px 0 0 0;
+      opacity: 0.8;
+    }
 
-        #password:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
+    .main-content {
+      padding: 40px;
+    }
 
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
+    .options-section {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border: 2px solid #e9ecef;
+    }
 
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            flex: 1;
-        }
+    .options-section h3 {
+      margin: 0 0 25px 0;
+      color: #495057;
+      font-size: 1.3em;
+      font-weight: 600;
+    }
 
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
+    .option-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
 
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      border: 2px solid #dee2e6;
+      transition: all 0.3s ease;
+    }
 
-        .btn-secondary {
-            background-color: var(--gray);
-            color: var(--dark);
-        }
+    .option-item:hover {
+      border-color: #4facfe;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(79, 172, 254, 0.2);
+    }
 
-        .btn-secondary:hover {
-            background-color: #d1d8e0;
-            transform: translateY(-2px);
-        }
+    .option-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #4facfe;
+      cursor: pointer;
+    }
 
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
+    .option-item label {
+      font-weight: 500;
+      cursor: pointer;
+      flex: 1;
+    }
 
-        .btn-success:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
+    .length-control {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      border: 2px solid #dee2e6;
+      margin-bottom: 20px;
+    }
 
-        .settings {
-            margin-bottom: 24px;
-        }
+    .length-control label {
+      font-weight: 600;
+      color: #495057;
+      min-width: 140px;
+    }
 
-        .setting-group {
-            margin-bottom: 20px;
-        }
+    .length-control input[type="number"] {
+      width: 80px;
+      padding: 8px 12px;
+      border: 2px solid #ced4da;
+      border-radius: 8px;
+      font-size: 1em;
+      text-align: center;
+    }
 
-        .setting-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
+    .length-control input[type="number"]:focus {
+      outline: none;
+      border-color: #4facfe;
+      box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+    }
 
-        .setting-title {
-            font-weight: 600;
-            font-size: 16px;
-        }
+    .generate-section {
+      text-align: center;
+      margin: 30px 0;
+    }
 
-        .dropdown-btn {
-            background-color: var(--gray);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            transition: var(--transition);
-        }
+    .generate-btn {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      padding: 18px 40px;
+      font-size: 1.2em;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+    }
 
-        .dropdown-btn:hover {
-            background-color: #d1d8e0;
-        }
+    .generate-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
+    }
 
-        .dropdown-btn:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.3);
-        }
+    .generate-btn:active {
+      transform: translateY(-1px);
+    }
 
-        .dropdown-content {
-            display: none;
-            padding: 15px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            margin-top: 5px;
-            animation: fadeIn 0.3s ease;
-        }
+    .output-section {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 2px solid #e9ecef;
+    }
 
-        .dropdown-content.show {
-            display: block;
-        }
+    .password-display {
+      display: flex;
+      gap: 15px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
 
-        .length-options {
-            display: flex;
-            gap: 10px;
-        }
+    .password-field {
+      flex: 1;
+      padding: 15px 20px;
+      font-size: 1.1em;
+      font-family: 'Courier New', monospace;
+      border: 2px solid #ced4da;
+      border-radius: 10px;
+      background: white;
+      min-height: 50px;
+      word-break: break-all;
+    }
 
-        .length-option {
-            flex: 1;
-            text-align: center;
-        }
+    .password-field:focus {
+      outline: none;
+      border-color: #4facfe;
+      box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+    }
 
-        .length-btn {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid var(--gray);
-            border-radius: 8px;
-            background-color: white;
-            cursor: pointer;
-            transition: var(--transition);
-        }
+    .copy-btn, .download-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
 
-        .length-btn:hover {
-            border-color: var(--primary);
-        }
+    .copy-btn:hover, .download-btn:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
 
-        .length-btn.selected {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
+    .download-btn {
+      background: #fd7e14;
+      margin-left: 10px;
+    }
 
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+    .download-btn:hover {
+      background: #e36209;
+    }
 
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .strength-meter {
+      margin-top: 20px;
+    }
 
-        .checkbox-item input {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-        }
+    .strength-label {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #495057;
+    }
 
-        .checkbox-item label {
-            cursor: pointer;
-            user-select: none;
-        }
+    .strength-bar {
+      height: 10px;
+      background: #e9ecef;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
 
-        .strength-meter {
-            height: 8px;
-            background-color: var(--gray);
-            border-radius: 4px;
-            margin-top: 20px;
-            overflow: hidden;
-        }
+    .strength-fill {
+      height: 100%;
+      transition: all 0.3s ease;
+      border-radius: 5px;
+    }
 
-        .strength-bar {
-            height: 100%;
-            width: 0%;
-            background-color: var(--secondary);
-            transition: var(--transition);
-        }
+    .strength-text {
+      font-weight: 600;
+      font-size: 0.9em;
+    }
 
-        .strength-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 14px;
-            color: var(--dark);
-        }
+    .strength-weak { background: #dc3545; color: #dc3545; }
+    .strength-medium { background: #ffc107; color: #ffc107; }
+    .strength-strong { background: #28a745; color: #28a745; }
 
-        .copy-notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--dark);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            opacity: 0;
-            transition: var(--transition);
-            z-index: 100;
-        }
+    .hidden {
+      display: none;
+    }
 
-        .copy-notification.show {
-            opacity: 1;
-            animation: slideDown 0.3s ease, fadeOut 0.3s ease 2s forwards;
-        }
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+      header {
+        padding: 30px 20px;
+      }
 
-        @keyframes slideDown {
-            from { top: -50px; }
-            to { top: 20px; }
-        }
+      header h1 {
+        font-size: 2.2em;
+      }
 
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
+      .main-content {
+        padding: 20px;
+      }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .btn-group {
-                flex-direction: column;
-            }
-            
-            .length-options {
-                flex-direction: column;
-            }
-        }
+      .option-group {
+        grid-template-columns: 1fr;
+      }
 
-        /* Focus styles for accessibility */
-        button:focus, input:focus, select:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.3);
-        }
+      .password-display {
+        flex-direction: column;
+      }
 
-        /* Animation for generated password */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .generated {
-            animation: pulse 0.3s ease;
-        }
-    </style>
+      .copy-btn, .download-btn {
+        margin-left: 0;
+        margin-top: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>SecurePass Generator</h1>
-        
-        <div class="password-display">
-            <input type="text" id="password" readonly aria-label="Generated password">
-            <div class="btn-group">
-                <button id="regenerate" class="btn btn-secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                    </svg>
-                    Regenerate
-                </button>
-                <button id="copy" class="btn btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
-                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
-                    </svg>
-                    Copy
-                </button>
-            </div>
-        </div>
-        
-        <div class="settings">
-            <div class="setting-group">
-                <div class="setting-header">
-                    <span class="setting-title">Password Length</span>
-                </div>
-                <button id="lengthDropdown" class="dropdown-btn" aria-expanded="false" aria-haspopup="true">
-                    <span id="selectedLength">12 characters</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                    </svg>
-                </button>
-                <div id="lengthOptions" class="dropdown-content" role="menu">
-                    <div class="length-options">
-                        <div class="length-option">
-                            <button class="length-btn" data-length="10">10</button>
-                        </div>
-                        <div class="length-option">
-                            <button class="length-btn selected" data-length="12">12</button>
-                        </div>
-                        <div class="length-option">
-                            <button class="length-btn" data-length="16">16</button>
-                        </div>
-                        <div class="length-option">
-                            <button class="length-btn" data-length="20">20</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="setting-group">
-                <div class="setting-header">
-                    <span class="setting-title">Customize Password</span>
-                </div>
-                <button id="customizeDropdown" class="dropdown-btn" aria-expanded="false" aria-haspopup="true">
-                    <span>Select character types</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                    </svg>
-                </button>
-                <div id="customizeOptions" class="dropdown-content" role="menu">
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="uppercase" checked>
-                            <label for="uppercase">Uppercase Letters (A-Z)</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="lowercase" checked>
-                            <label for="lowercase">Lowercase Letters (a-z)</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="numbers" checked>
-                            <label for="numbers">Numbers (0-9)</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="symbols" checked>
-                            <label for="symbols">Special Characters (!@#$%^&*)</label>
-                        </div>
-                    </div>
-                    <button id="applyCustom" class="btn btn-primary" style="margin-top: 15px; width: 100%;">OK</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="strength-meter">
-            <div id="strengthBar" class="strength-bar"></div>
-        </div>
-        <div class="strength-info">
-            <span>Password Strength:</span>
-            <span id="strengthText">Medium</span>
-        </div>
-        
-        <button id="generate" class="btn btn-success" style="margin-top: 24px;">
-            Generate Password
-        </button>
-    </div>
-    
-    <div id="copyNotification" class="copy-notification" aria-live="polite">
-        Password copied to clipboard!
-    </div>
+  <div class="container">
+    <header>
+      <h1>AR Password Vault</h1>
+      <h2>Generate Strong Passwords Instantly</h2>
+      <p>Developed by S M Ripon & Md Sunny Sarkar • Powered by Accessible Resource</p>
+    </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const passwordInput = document.getElementById('password');
-            const generateBtn = document.getElementById('generate');
-            const regenerateBtn = document.getElementById('regenerate');
-            const copyBtn = document.getElementById('copy');
-            const lengthDropdown = document.getElementById('lengthDropdown');
-            const lengthOptions = document.getElementById('lengthOptions');
-            const customizeDropdown = document.getElementById('customizeDropdown');
-            const customizeOptions = document.getElementById('customizeOptions');
-            const applyCustomBtn = document.getElementById('applyCustom');
-            const lengthBtns = document.querySelectorAll('.length-btn');
-            const strengthBar = document.getElementById('strengthBar');
-            const strengthText = document.getElementById('strengthText');
-            const copyNotification = document.getElementById('copyNotification');
-            
-            // Character sets
-            const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
-            const numberChars = '0123456789';
-            const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-            
-            // Settings
-            let settings = {
-                length: 12,
-                uppercase: true,
-                lowercase: true,
-                numbers: true,
-                symbols: true
-            };
-            
-            // Initialize
-            updateSelectedLength();
-            
-            // Event Listeners
-            generateBtn.addEventListener('click', generatePassword);
-            regenerateBtn.addEventListener('click', generatePassword);
-            copyBtn.addEventListener('click', copyPassword);
-            
-            lengthDropdown.addEventListener('click', toggleLengthDropdown);
-            customizeDropdown.addEventListener('click', toggleCustomizeDropdown);
-            applyCustomBtn.addEventListener('click', applyCustomSettings);
-            
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!lengthDropdown.contains(e.target) && !lengthOptions.contains(e.target)) {
-                    lengthOptions.classList.remove('show');
-                    lengthDropdown.setAttribute('aria-expanded', 'false');
-                }
-                
-                if (!customizeDropdown.contains(e.target) && !customizeOptions.contains(e.target)) {
-                    customizeOptions.classList.remove('show');
-                    customizeDropdown.setAttribute('aria-expanded', 'false');
-                }
-            });
-            
-            // Length buttons
-            lengthBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const length = parseInt(this.getAttribute('data-length'));
-                    settings.length = length;
-                    
-                    // Update UI
-                    lengthBtns.forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    updateSelectedLength();
-                    
-                    // Close dropdown
-                    lengthOptions.classList.remove('show');
-                    lengthDropdown.setAttribute('aria-expanded', 'false');
-                });
-            });
-            
-            // Functions
-            function toggleLengthDropdown() {
-                const isExpanded = lengthDropdown.getAttribute('aria-expanded') === 'true';
-                lengthOptions.classList.toggle('show');
-                lengthDropdown.setAttribute('aria-expanded', !isExpanded);
-                
-                // Close other dropdown
-                customizeOptions.classList.remove('show');
-                customizeDropdown.setAttribute('aria-expanded', 'false');
-            }
-            
-            function toggleCustomizeDropdown() {
-                const isExpanded = customizeDropdown.getAttribute('aria-expanded') === 'true';
-                customizeOptions.classList.toggle('show');
-                customizeDropdown.setAttribute('aria-expanded', !isExpanded);
-                
-                // Close other dropdown
-                lengthOptions.classList.remove('show');
-                lengthDropdown.setAttribute('aria-expanded', 'false');
-            }
-            
-            function applyCustomSettings() {
-                settings.uppercase = document.getElementById('uppercase').checked;
-                settings.lowercase = document.getElementById('lowercase').checked;
-                settings.numbers = document.getElementById('numbers').checked;
-                settings.symbols = document.getElementById('symbols').checked;
-                
-                // Close dropdown
-                customizeOptions.classList.remove('show');
-                customizeDropdown.setAttribute('aria-expanded', 'false');
-            }
-            
-            function updateSelectedLength() {
-                document.getElementById('selectedLength').textContent = `${settings.length} characters`;
-            }
-            
-            function generatePassword() {
-                let availableChars = '';
-                let password = '';
-                
-                // Build available characters based on settings
-                if (settings.uppercase) availableChars += uppercaseChars;
-                if (settings.lowercase) availableChars += lowercaseChars;
-                if (settings.numbers) availableChars += numberChars;
-                if (settings.symbols) availableChars += symbolChars;
-                
-                // Check if at least one character type is selected
-                if (availableChars.length === 0) {
-                    alert('Please select at least one character type!');
-                    return;
-                }
-                
-                // Generate password
-                for (let i = 0; i < settings.length; i++) {
-                    const randomIndex = Math.floor(Math.random() * availableChars.length);
-                    password += availableChars[randomIndex];
-                }
-                
-                // Ensure password contains at least one character from each selected type
-                if (settings.uppercase && !containsAny(password, uppercaseChars)) {
-                    password = replaceRandomChar(password, uppercaseChars);
-                }
-                if (settings.lowercase && !containsAny(password, lowercaseChars)) {
-                    password = replaceRandomChar(password, lowercaseChars);
-                }
-                if (settings.numbers && !containsAny(password, numberChars)) {
-                    password = replaceRandomChar(password, numberChars);
-                }
-                if (settings.symbols && !containsAny(password, symbolChars)) {
-                    password = replaceRandomChar(password, symbolChars);
-                }
-                
-                // Display password
-                passwordInput.value = password;
-                passwordInput.classList.add('generated');
-                setTimeout(() => passwordInput.classList.remove('generated'), 300);
-                
-                // Calculate strength
-                calculateStrength(password);
-            }
-            
-            function containsAny(str, chars) {
-                return [...chars].some(char => str.includes(char));
-            }
-            
-            function replaceRandomChar(str, chars) {
-                const randomIndex = Math.floor(Math.random() * str.length);
-                const randomChar = chars[Math.floor(Math.random() * chars.length)];
-                return str.substring(0, randomIndex) + randomChar + str.substring(randomIndex + 1);
-            }
-            
-            function copyPassword() {
-                if (!passwordInput.value) {
-                    alert('No password to copy!');
-                    return;
-                }
-                
-                passwordInput.select();
-                document.execCommand('copy');
-                
-                // Show notification
-                copyNotification.classList.add('show');
-                setTimeout(() => {
-                    copyNotification.classList.remove('show');
-                }, 2500);
-            }
-            
-            function calculateStrength(password) {
-                let strength = 0;
-                const length = password.length;
-                
-                // Length contributes up to 50 points (12 chars = 30 pts, 20+ chars = 50 pts)
-                strength += Math.min(50, Math.floor(length * 2.5));
-                
-                // Character variety
-                let varietyScore = 0;
-                if (settings.uppercase && containsAny(password, uppercaseChars)) varietyScore += 10;
-                if (settings.lowercase && containsAny(password, lowercaseChars)) varietyScore += 10;
-                if (settings.numbers && containsAny(password, numberChars)) varietyScore += 10;
-                if (settings.symbols && containsAny(password, symbolChars)) varietyScore += 20;
-                
-                strength += varietyScore;
-                
-                // Normalize to 100
-                strength = Math.min(100, strength);
-                
-                // Update UI
-                strengthBar.style.width = `${strength}%`;
-                
-                if (strength < 40) {
-                    strengthBar.style.backgroundColor = '#ff6b6b';
-                    strengthText.textContent = 'Weak';
-                } else if (strength < 70) {
-                    strengthBar.style.backgroundColor = '#ffa500';
-                    strengthText.textContent = 'Medium';
-                } else if (strength < 90) {
-                    strengthBar.style.backgroundColor = '#48bb78';
-                    strengthText.textContent = 'Strong';
-                } else {
-                    strengthBar.style.backgroundColor = '#2f855a';
-                    strengthText.textContent = 'Very Strong';
-                }
-            }
-            
-            // Generate initial password
-            generatePassword();
-        });
-    </script>
+    <div class="main-content">
+      <div class="options-section">
+        <h3>Password Configuration</h3>
+        
+        <div class="length-control">
+          <label for="password-length" aria-label="Select password length">Password Length:</label>
+          <input type="number" id="password-length" min="4" max="64" value="16" aria-label="Password length">
+          <span id="length-display">16 characters</span>
+        </div>
+
+        <div class="option-group">
+          <div class="option-item">
+            <input type="checkbox" id="uppercase" checked aria-label="Include uppercase letters">
+            <label for="uppercase">Include Uppercase Letters (A-Z)</label>
+          </div>
+
+          <div class="option-item">
+            <input type="checkbox" id="lowercase" checked aria-label="Include lowercase letters">
+            <label for="lowercase">Include Lowercase Letters (a-z)</label>
+          </div>
+
+          <div class="option-item">
+            <input type="checkbox" id="numbers" checked aria-label="Include numbers">
+            <label for="numbers">Include Numbers (0-9)</label>
+          </div>
+
+          <div class="option-item">
+            <input type="checkbox" id="symbols" checked aria-label="Include symbols">
+            <label for="symbols">Include Symbols (!@#$%^&*)</label>
+          </div>
+
+          <div class="option-item">
+            <input type="checkbox" id="exclude-similar" aria-label="Exclude similar characters">
+            <label for="exclude-similar">Exclude Similar Characters (0,O,l,1)</label>
+          </div>
+
+          <div class="option-item">
+            <input type="checkbox" id="avoid-ambiguous" aria-label="Avoid ambiguous symbols">
+            <label for="avoid-ambiguous">Avoid Ambiguous Symbols ({},[],"')</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="generate-section">
+        <button id="generate-btn" class="generate-btn" aria-label="Generate password">
+          Generate Password
+        </button>
+      </div>
+
+      <div id="output-section" class="output-section hidden">
+        <div class="password-display">
+          <input type="text" id="password-field" class="password-field" readonly aria-label="Generated password">
+          <button id="copy-btn" class="copy-btn" aria-label="Copy password to clipboard">
+            Copy
+          </button>
+          <button id="download-btn" class="download-btn" aria-label="Download password as text file">
+            Download
+          </button>
+        </div>
+
+        <div class="strength-meter">
+          <div class="strength-label">Password Strength:</div>
+          <div class="strength-bar">
+            <div id="strength-fill" class="strength-fill"></div>
+          </div>
+          <div id="strength-text" class="strength-text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Character sets
+    const charSets = {
+      uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      lowercase: 'abcdefghijklmnopqrstuvwxyz',
+      numbers: '0123456789',
+      symbols: '!@#$%^&*()_+-=[]{}|;:,.<>?',
+      similarChars: '0Ol1',
+      ambiguousSymbols: '{}[]"\''
+    };
+
+    // DOM elements
+    const lengthInput = document.getElementById('password-length');
+    const lengthDisplay = document.getElementById('length-display');
+    const generateBtn = document.getElementById('generate-btn');
+    const outputSection = document.getElementById('output-section');
+    const passwordField = document.getElementById('password-field');
+    const copyBtn = document.getElementById('copy-btn');
+    const downloadBtn = document.getElementById('download-btn');
+    const strengthFill = document.getElementById('strength-fill');
+    const strengthText = document.getElementById('strength-text');
+
+    let downloadCounter = 1;
+
+    // Update length display
+    lengthInput.addEventListener('input', () => {
+      const length = parseInt(lengthInput.value);
+      lengthDisplay.textContent = `${length} character${length !== 1 ? 's' : ''}`;
+    });
+
+    // Generate secure random password
+    function generatePassword() {
+      const length = parseInt(lengthInput.value);
+      const options = {
+        uppercase: document.getElementById('uppercase').checked,
+        lowercase: document.getElementById('lowercase').checked,
+        numbers: document.getElementById('numbers').checked,
+        symbols: document.getElementById('symbols').checked,
+        excludeSimilar: document.getElementById('exclude-similar').checked,
+        avoidAmbiguous: document.getElementById('avoid-ambiguous').checked
+      };
+
+      // Build character set
+      let chars = '';
+      if (options.uppercase) chars += charSets.uppercase;
+      if (options.lowercase) chars += charSets.lowercase;
+      if (options.numbers) chars += charSets.numbers;
+      if (options.symbols) chars += charSets.symbols;
+
+      // Remove excluded characters
+      if (options.excludeSimilar) {
+        chars = chars.split('').filter(char => !charSets.similarChars.includes(char)).join('');
+      }
+      if (options.avoidAmbiguous) {
+        chars = chars.split('').filter(char => !charSets.ambiguousSymbols.includes(char)).join('');
+      }
+
+      if (chars.length === 0) {
+        alert('Please select at least one character type!');
+        return '';
+      }
+
+      // Generate password using crypto.getRandomValues for better security
+      let password = '';
+      const array = new Uint32Array(length);
+      crypto.getRandomValues(array);
+      
+      for (let i = 0; i < length; i++) {
+        password += chars[array[i] % chars.length];
+      }
+
+      return password;
+    }
+
+    // Calculate password strength
+    function calculateStrength(password) {
+      let score = 0;
+      const length = password.length;
+      
+      // Length scoring
+      if (length >= 8) score += 1;
+      if (length >= 12) score += 1;
+      if (length >= 16) score += 1;
+      
+      // Character variety scoring
+      if (/[a-z]/.test(password)) score += 1;
+      if (/[A-Z]/.test(password)) score += 1;
+      if (/[0-9]/.test(password)) score += 1;
+      if (/[^a-zA-Z0-9]/.test(password)) score += 1;
+      
+      // Return strength level
+      if (score <= 3) return { level: 'weak', percentage: 33 };
+      if (score <= 5) return { level: 'medium', percentage: 66 };
+      return { level: 'strong', percentage: 100 };
+    }
+
+    // Update strength meter
+    function updateStrengthMeter(password) {
+      const strength = calculateStrength(password);
+      strengthFill.style.width = `${strength.percentage}%`;
+      strengthFill.className = `strength-fill strength-${strength.level}`;
+      strengthText.textContent = strength.level.charAt(0).toUpperCase() + strength.level.slice(1);
+      strengthText.className = `strength-text strength-${strength.level}`;
+    }
+
+    // Voice feedback
+    function speakMessage(message) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.rate = 0.8;
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Generate password event
+    generateBtn.addEventListener('click', () => {
+      const password = generatePassword();
+      if (password) {
+        passwordField.value = password;
+        updateStrengthMeter(password);
+        outputSection.classList.remove('hidden');
+        speakMessage('Your new secure password is ready.');
+      }
+    });
+
+    // Copy to clipboard
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(passwordField.value);
+        copyBtn.textContent = 'Copied!';
+        copyBtn.style.background = '#28a745';
+        speakMessage('Password copied to clipboard.');
+        
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+          copyBtn.style.background = '#28a745';
+        }, 2000);
+      } catch (err) {
+        // Fallback for older browsers
+        passwordField.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Copied!';
+        speakMessage('Password copied to clipboard.');
+        
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+        }, 2000);
+      }
+    });
+
+    // Download password as text file
+    downloadBtn.addEventListener('click', () => {
+      const password = passwordField.value;
+      const blob = new Blob([password], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `AR_Password_${downloadCounter}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      downloadCounter++;
+      speakMessage('Password file downloaded successfully.');
+    });
+
+    // Keyboard accessibility
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target === generateBtn) {
+        generateBtn.click();
+      }
+    });
+
+    // Initialize
+    lengthDisplay.textContent = '16 characters';
+  </script>
 </body>
 </html>
